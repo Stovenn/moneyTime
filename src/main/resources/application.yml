@@ -1,0 +1,25 @@
+spring:
+  data:
+    mongodb:
+      uri: "mongodb+srv://js:js@cluster0.irx0d.mongodb.net/moneytimedb?retryWrites=true&w=majority"
+
+  mail:
+    host: localhost
+    port: 1025
+    username: hi
+    password: hi
+
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: "*"
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+jwt:
+  secret: "somesecret"
