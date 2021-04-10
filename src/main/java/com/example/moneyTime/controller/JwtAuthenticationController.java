@@ -4,6 +4,7 @@ import com.example.moneyTime.model.JwtRequest;
 import com.example.moneyTime.model.JwtResponse;
 import com.example.moneyTime.security.JwtTokenUtil;
 import com.example.moneyTime.service.JwtUserDetailsService;
+import com.example.moneyTime.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +25,7 @@ public class JwtAuthenticationController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    private UserService userDetailsService;
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception
@@ -33,12 +34,17 @@ public class JwtAuthenticationController {
         authenticationRequest.getPassword();
         final UserDetails userDetails =
                 userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        //JwtUserDetails userDetails = new JwtUserDetails();
-        //userDetails.setUsername(authenticationRequest.getUsername());
 
+        final boolean isPasswordCorrect = userDetailsService.isPasswordCorrect(authenticationRequest.getPassword(), userDetails);
+        System.out.println(isPasswordCorrect);
 
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        if(!isPasswordCorrect){
+            throw new IllegalStateException("wrong email or password");
+        } else {
+            final String token = jwtTokenUtil.generateToken(userDetails);
+            System.out.println(token);
+            return ResponseEntity.ok(new JwtResponse(token));
+        }
     }
 
     private void authenticate(String username, String password) throws Exception {

@@ -4,6 +4,7 @@ import com.example.moneyTime.service.UserService;
 import com.example.moneyTime.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,14 +28,14 @@ public class UserController {
         return userService.findAllUsers();
     }
 
-    @GetMapping(path = "/{studentId}")
-    public Optional<User> getUserById(@PathVariable("studentId") String studentId){
+    @GetMapping(path = "/{userId}")
+    public Optional<User> getUserById(@PathVariable("userId") String studentId){
         return userService.findById(studentId);
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid User user){
-        return userService.createUser(user);
+    @PutMapping
+    public ResponseEntity<User>updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
     }
 
 

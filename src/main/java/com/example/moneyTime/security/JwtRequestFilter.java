@@ -1,6 +1,7 @@
 package com.example.moneyTime.security;
 
 import com.example.moneyTime.service.JwtUserDetailsService;
+import com.example.moneyTime.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,11 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
+    //@Autowired
+    //private JwtUserDetailsService jwtUserDetailsService;
+
     @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
+    private UserService userService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -43,6 +47,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                System.out.println(username);
 
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
@@ -55,7 +60,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null)
         {
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = this.userService.loadUserByUsername(username);
             // if token is valid configure Spring Security to manually set
             // authentication
             if (jwtTokenUtil.validateToken(jwtToken, userDetails))
