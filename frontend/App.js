@@ -7,7 +7,7 @@ import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 
 import WelcomeScreen from "./screens/WelcomeScreen";
-import RegisterScreen from "./screens/RegisterScreen";
+import RegisterScreen from "./screens/Register/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
 import Step2 from "./screens/Register/Step2";
 import Step1 from "./screens/Register/Step1";
@@ -22,6 +22,8 @@ import { fetchUsers } from "./store/actions/userActions";
 
 import user from "./store/reducers/usersReducers";
 import Dashboard from "./screens/Dashboard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { navigationRef } from "./config/RootNav";
 
 const store = createStore(
   user,
@@ -44,12 +46,12 @@ class App extends Component {
       });
     };
     loadFonts().then(() => {
-      setTimeout(() => {
-        //setIsReady(true);
+      setTimeout( async() => {
+        await AsyncStorage.removeItem["authorization"];
       }, 3000);
     });
 
-  store.dispatch(fetchUsers());
+  //store.dispatch(fetchUsers());
   }
 
   // if(!isReady){
@@ -59,7 +61,7 @@ class App extends Component {
     return (
       <Provider store={store}>
         <SafeAreaView style={styles.container}>
-          <NavigationContainer>
+          <NavigationContainer ref={navigationRef}>
             <Stack.Navigator
               headerMode="screen"
               screenOptions={{

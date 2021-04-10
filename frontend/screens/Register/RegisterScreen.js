@@ -1,16 +1,24 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { updateRegisterForm, createUser } from "../store/actions/userActions";
-import Step1 from "./Register/Step1";
-import Step2 from "./Register/Step2";
-import Step3 from "./Register/Step3";
-import Step4 from "./Register/Step4";
-import Step5 from "./Register/Step5";
+import { updateRegisterForm, createUser, updateUser, resetRegisterForm } from "../../store/actions/userActions";
+import Step1 from "./Step1";
+import Step2 from "./Step2";
+import Step3 from "./Step3";
+import Step4 from "./Step4";
+import Step5 from "./Step5";
+import Step6 from "./Step6";
+import Step7 from "./Step7";
 
 class RegisterScreen extends Component {
-  nextStep = () => {
+  nextStep = async() => {
+    console.log(this.props.step)
+    if(this.props.step === 7) {
+      await this.props.updateUser(this.props.form);
+      this.props.resetRegisterForm();
+      return;
+    }
     if(this.props.step === 4){ 
-        this.props.createUser(this.props.form)
+      await this.props.createUser(this.props.form)
     }
     this.props.incrementStep();
   };
@@ -68,12 +76,30 @@ class RegisterScreen extends Component {
       case 5:
         return (
           <Step5
-            nextStep={this.props.incrementStep}
+            nextStep={this.nextStep}
             previousStep={this.previousStep}
             handleChange={this.props.updateRegisterForm}
             values={this.props.form}
           />
         );
+      case 6:
+        return (
+          <Step6
+            nextStep={this.nextStep}
+            previousStep={this.previousStep}
+            handleChange={this.props.updateRegisterForm}
+            values={this.props.form}
+          />
+        );
+      case 7:
+        return (
+          <Step7
+            nextStep={this.nextStep}
+            previousStep={this.previousStep}
+            handleChange={this.props.updateRegisterForm}
+            values={this.props.form}
+          />
+        )
     }
   }
 }
@@ -88,8 +114,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     createUser: (user) => dispatch(createUser(user)),
+    updateUser: (user) => dispatch(updateUser(user)),
     updateRegisterForm: (fieldName, fieldValue) =>
       dispatch(updateRegisterForm(fieldName, fieldValue)),
+    resetRegisterForm: () => dispatch(resetRegisterForm()),
     incrementStep: () => dispatch({ type: "INCREMENT_STEP" }),
     decrementStep: () => dispatch({ type: "DECREMENT_STEP" }),
   };

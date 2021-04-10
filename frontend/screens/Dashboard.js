@@ -6,9 +6,17 @@ import { View, Text, Header, Left, Icon, Button, Container } from "native-base";
 import * as RootNavigation from "../config/RootNav";
 
 const Dashboard = ({navigation}) => {
-  const handleLogout = () => {
-    AsyncStorage.clear();
-    navigation.navigate("Welcome");
+  const handleLogout = async() => {
+    try{
+      await AsyncStorage.getItem("authorization").then(item => console.log(item))
+
+      await AsyncStorage.removeItem("authorization");
+
+      await AsyncStorage.getItem("authorization").then(item => console.log(item))
+      navigation.navigate("Welcome");
+    } catch(e) {
+      console.log("Error while logout")
+    }
   }
 
     return (
