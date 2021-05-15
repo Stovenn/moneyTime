@@ -1,2 +1,9 @@
-package com.example.moneyTime.dao;public interface ExerciseRepository {
+package com.example.moneyTime.dao;
+
+import com.example.moneyTime.model.Exercise;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ExerciseRepository extends MongoRepository<Exercise, String> {
 }

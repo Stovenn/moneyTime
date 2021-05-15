@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Document(collection = "users")
-
 public class User implements UserDetails {
 
     @Id
@@ -30,7 +30,7 @@ public class User implements UserDetails {
     private Integer weight;
     private String position;
     private String experience;
-    private List<Workout> workouts;
+    private ArrayList<Workout> workouts;
 
 
     public User(String firstName, String lastName, String email, LocalDate birthdate, String password) {
@@ -39,10 +39,11 @@ public class User implements UserDetails {
         this.email = email;
         this.birthdate = birthdate;
         this.password = password;
+        this.workouts = new ArrayList<Workout>();
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 

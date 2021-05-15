@@ -30,19 +30,17 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception
     {
-        //authenticate(authenticationRequest.getUsername(),
-        authenticationRequest.getPassword();
+//        //authenticate(authenticationRequest.getUsername(),
+//        authenticationRequest.getPassword();
         final UserDetails userDetails =
                 userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         final boolean isPasswordCorrect = userDetailsService.isPasswordCorrect(authenticationRequest.getPassword(), userDetails);
-        System.out.println(isPasswordCorrect);
 
         if(!isPasswordCorrect){
             throw new IllegalStateException("wrong email or password");
         } else {
             final String token = jwtTokenUtil.generateToken(userDetails);
-            System.out.println(token);
             return ResponseEntity.ok(new JwtResponse(token));
         }
     }

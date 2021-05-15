@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getUsers(){
+    public List<User> getWorkouts(){
         return userService.findAllUsers();
     }
 
