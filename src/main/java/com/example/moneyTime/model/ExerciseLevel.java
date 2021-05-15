@@ -1,2 +1,5 @@
-package com.example.moneyTime.model;public enum ExerciseLevel {
+package com.example.moneyTime.model;
+
+public enum ExerciseLevel {
+    EASY, MEDIUM , HARD
 }
