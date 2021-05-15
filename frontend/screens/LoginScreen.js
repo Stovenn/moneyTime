@@ -55,7 +55,7 @@ class LoginScreen extends Component {
       })
       .then((res) => {
         if (res.data === "success dashboard") {
-          this.props.navigation.navigate("Dashboard");
+          this.props.navigation.navigate("MainStack");
         }
       });
   };
@@ -64,7 +64,7 @@ class LoginScreen extends Component {
       <Container style={{ flex: 1 }}>
         <Header>
           <Left>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.goBack()}>
               <Icon type="FontAwesome" name="chevron-left" />
             </Button>
           </Left>

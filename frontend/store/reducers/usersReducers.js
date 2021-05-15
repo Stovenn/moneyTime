@@ -19,6 +19,7 @@ const INITIAL_STATE = {
     email: "",
     password: "",
   },
+
 };
 
 const user = (state = INITIAL_STATE, action) => {

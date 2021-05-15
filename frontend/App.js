@@ -2,7 +2,7 @@ import React, { useState, useEffect, Component } from "react";
 import { SafeAreaView, StyleSheet, Platform, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-//import AppLoading from "expo-app-loading";
+import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -24,18 +24,16 @@ import user from "./store/reducers/usersReducers";
 import Dashboard from "./screens/Dashboard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { navigationRef } from "./config/RootNav";
+import MyHeader from "./UI/MyHeader";
 
 const store = createStore(
   user,
-  // combineReducers({ user }),
-  //{},
   applyMiddleware(thunk)
 );
 
 const Stack = createStackNavigator();
 
 class App extends Component {
-  //const [isReady, setIsReady] = useState(false);
 
   componentDidMount() {
     const loadFonts = async () => {
@@ -50,13 +48,8 @@ class App extends Component {
         await AsyncStorage.removeItem["authorization"];
       }, 3000);
     });
-
-  //store.dispatch(fetchUsers());
   }
 
-  // if(!isReady){
-  //   return <AppLoading />
-  // }
   render() {
     return (
       <Provider store={store}>
@@ -65,17 +58,6 @@ class App extends Component {
             <Stack.Navigator
               headerMode="screen"
               screenOptions={{
-                // header: ({ scene, previous, navigation }) => {
-                //   const { options } = scene.descriptor;
-                //   return (
-                //     <MyHeader
-                //       // leftButton={
-                //       //   previous ? <MyBackButton onPress={navigation.goBack} /> : undefined
-                //       // }
-                //       style={options.headerStyle}
-                //     />
-                //   );
-                // },
                 //gestureEnabled: false,
                 headerShown: false,
               }}
@@ -91,13 +73,33 @@ class App extends Component {
               <Stack.Screen name="Step3" component={Step3} />
               <Stack.Screen name="Step4" component={Step4} />
               <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Dashboard" component={Dashboard} />
+              <Stack.Screen name="MainStack" component={MainStack} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaView>
       </Provider>
     );
   }
+}
+const MainStack = () => {
+  return(
+    <Stack.Navigator 
+      headerMode="screen"
+      screenOptions={{
+      header: ({ scene, previous, navigation }) => {
+        const { options } = scene.descriptor;
+        return (
+          <MyHeader
+            naviagation = {navigation}
+            style={options.headerStyle}
+          />
+        );
+      },
+      gestureEnabled: false,
+    }}>
+      <Stack.Screen name="Dashboard" component={Dashboard} />
+    </Stack.Navigator>
+  )
 }
 
 const styles = StyleSheet.create({

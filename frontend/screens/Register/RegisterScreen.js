@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { updateRegisterForm, createUser, updateUser, resetRegisterForm } from "../../store/actions/userActions";
+import {
+  updateRegisterForm,
+  createUser,
+  updateUser,
+  resetRegisterForm,
+} from "../../store/actions/userActions";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
@@ -10,15 +15,15 @@ import Step6 from "./Step6";
 import Step7 from "./Step7";
 
 class RegisterScreen extends Component {
-  nextStep = async() => {
-    console.log(this.props.step)
-    if(this.props.step === 7) {
+  nextStep = async () => {
+    console.log(this.props.step);
+    if (this.props.step === 7) {
       await this.props.updateUser(this.props.form);
       this.props.resetRegisterForm();
       return;
     }
-    if(this.props.step === 4){ 
-      await this.props.createUser(this.props.form)
+    if (this.props.step === 4) {
+      await this.props.createUser(this.props.form);
     }
     this.props.incrementStep();
   };
@@ -35,7 +40,7 @@ class RegisterScreen extends Component {
     this.props.updateRegisterForm(field, value);
   };
 
-  render() {
+  renderSwitch = () => {
     switch (this.props.step) {
       case 1:
         return (
@@ -99,8 +104,12 @@ class RegisterScreen extends Component {
             handleChange={this.props.updateRegisterForm}
             values={this.props.form}
           />
-        )
+        );
     }
+  };
+
+  render() {
+    return <React.Fragment>{this.renderSwitch()}</React.Fragment>;
   }
 }
 

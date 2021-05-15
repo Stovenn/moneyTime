@@ -57,6 +57,7 @@ const Step4 = (props) => {
             <Item floatingLabel>
               <Label>Mot de passe</Label>
               <Input
+                secureTextEntry={true}
                 style={{ fontSize: 25, fontWeight: "200" }}
                 placeholder="mot de passe"
                 value={props.values.password}
