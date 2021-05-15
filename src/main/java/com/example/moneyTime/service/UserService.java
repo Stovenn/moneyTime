@@ -6,9 +6,11 @@ import com.example.moneyTime.validation.EmailValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,14 +50,50 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public ResponseEntity<User> updateUser(User user) {
+        try {
+           Optional<User> dbUser = userRepository.findByEmail(user.getEmail());
+               if(dbUser.isPresent()) {
+                   User userData = dbUser.get();
+                   String encodedPassword = passwordEncoder.encode(user.getPassword());
+
+                   userData.setFirstName(user.getFirstName());
+                   userData.setLastName(user.getLastName());
+                   userData.setPassword(encodedPassword);
+                   userData.setWeight(user.getWeight());
+                   userData.setHeight(user.getHeight());
+                   userData.setPosition(user.getPosition());
+                   userData.setExperience(user.getExperience());
+
+                   userRepository.save(userData);
+
+                   return new ResponseEntity<>(null, HttpStatus.OK);
+
+               } else {
+                   throw new UsernameNotFoundException("User not found");
+               }
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email)
         throws UsernameNotFoundException {
-            return (UserDetails) userRepository.findByEmail(email)
+        System.out.println(userRepository.findByEmail(email));
+            return  userRepository.findByEmail(email)
                     .orElseThrow(()->
                             new UsernameNotFoundException(
                                     String.format(USER_NOT_FOUND_MESSAGE, email)));
     }
+
+
+    public boolean isPasswordCorrect(String password, UserDetails userDetails) {
+        System.out.println(password);
+        return passwordEncoder.matches(password, userDetails.getPassword());
+    }
+
 
     public String signUpUser(User user) {
         boolean userExists = userRepository.findByEmail(user.getEmail()).isPresent();

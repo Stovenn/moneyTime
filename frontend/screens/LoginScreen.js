@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { updateLoginForm } from "../store/actions/userActions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "react-native";
 import {
   Container,
@@ -18,13 +19,17 @@ import {
 
 import axios from "../config/Interceptors";
 
-const LoginScreen  = ({ navigation }) => {
-  const handleFormSubmit = (e) =>{
+class LoginScreen extends Component {
+  handleChange = (field, value) => {
+    this.props.updateLoginForm(field, value);
+  };
+
+  handleFormSubmit = (e) => {
     e.preventDefault();
 
     const endpoint = "http://localhost:8080/authenticate";
-    const username = "admin";
-    const password = "admin";
+    const username = this.props.form.email;
+    const password = this.props.form.password;
 
     const user_object = {
       username,
@@ -32,39 +37,34 @@ const LoginScreen  = ({ navigation }) => {
     };
 
     axios.post(endpoint, user_object).then((res) => {
-        AsyncStorage.setItem("authorization", res.data.token)
-        return handleDashboard();
+      AsyncStorage.setItem("authorization", res.data.token);
+      return this.handleDashboard();
     });
-  }
+  };
 
-  const handleDashboard = async() => {
-        let storedToken = await AsyncStorage.getItem("authorization").then(token => token)
+  handleDashboard = async () => {
+    let storedToken = await AsyncStorage.getItem("authorization").then(
+      (token) => token
+    );
 
-        await axios.get("http://localhost:8080/dashboard", {
-            headers: {
-                'authorization': 'Bearer ' + storedToken
-            }
-        }).then(res=>{
-            if(res.data === 'success dashboard') {
-                navigation.navigate("Dashboard")
-            }
-        })
-        
-        
-//     axios.get("http://localhost:8080/dashboard").then((res) => {
-//       if (res.data === "success") {
-//           console.log('DASHBOARD')
-//         props.history.push("/dashboard");
-//       } else {
-//         console.error("Authentication failed");
-//       }
-//    });
-  }
+    await axios
+      .get("http://localhost:8080/dashboard", {
+        headers: {
+          authorization: "Bearer " + storedToken,
+        },
+      })
+      .then((res) => {
+        if (res.data === "success dashboard") {
+          this.props.navigation.navigate("MainStack");
+        }
+      });
+  };
+  render() {
     return (
       <Container style={{ flex: 1 }}>
         <Header>
           <Left>
-            <Button transparent >
+            <Button transparent onPress={() => this.props.navigation.goBack()}>
               <Icon type="FontAwesome" name="chevron-left" />
             </Button>
           </Left>
@@ -95,9 +95,8 @@ const LoginScreen  = ({ navigation }) => {
                 <Input
                   style={{ fontSize: 25, fontWeight: "200" }}
                   placeholder="email"
-                  value="admin"
-                  //value={props.form.email}
-                  //onChangeText={(text) => props.handleChange("height", text)}
+                  value={this.props.form.email}
+                  onChangeText={(text) => this.handleChange("email", text)}
                 />
               </Item>
               <Item floatingLabel>
@@ -105,15 +104,13 @@ const LoginScreen  = ({ navigation }) => {
                 <Input
                   style={{ fontSize: 25, fontWeight: "200" }}
                   placeholder="mot de passe"
-                  value="admin"
-                  //value={props.form.password}
-                  //onChangeText={(text) => props.handleChange("password", text)}
+                  value={this.props.form.password}
+                  onChangeText={(text) => this.handleChange("password", text)}
                 />
               </Item>
             </View>
             <View style={{ flex: 2 }}>
-              <Button block rounded 
-              onPress={(e) => handleFormSubmit(e)}>
+              <Button block rounded onPress={(e) => this.handleFormSubmit(e)}>
                 <Text>Login</Text>
               </Button>
             </View>
@@ -121,6 +118,21 @@ const LoginScreen  = ({ navigation }) => {
         </View>
       </Container>
     );
+  }
 }
-  
-export default LoginScreen;
+
+const mapStateToProps = (state) => {
+  return {
+    form: state.loginForm,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    createUser: (user) => dispatch(createUser(user)),
+    updateLoginForm: (fieldName, fieldValue) =>
+      dispatch(updateLoginForm(fieldName, fieldValue)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
