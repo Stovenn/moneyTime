@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { updateLoginForm } from "../store/actions/userActions";
+import { updateLoginForm, logIn } from "../store/actions/userActions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "react-native";
 import {
@@ -27,19 +27,22 @@ class LoginScreen extends Component {
   handleFormSubmit = (e) => {
     e.preventDefault();
 
-    const endpoint = "http://localhost:8080/authenticate";
+    //const endpoint = "http://localhost:8080/authenticate";
     const username = this.props.form.email;
     const password = this.props.form.password;
 
-    const user_object = {
+    const user = {
       username,
       password,
     };
 
-    axios.post(endpoint, user_object).then((res) => {
-      AsyncStorage.setItem("authorization", res.data.token);
-      return this.handleDashboard();
-    });
+    this.props.login(user)
+
+    // axios.post(endpoint, user_object).then((res) => {
+    //   AsyncStorage.setItem("authorization", res.data.token);
+    //   AsyncStorage.setItem("user", res.data)
+    //   return this.handleDashboard();
+    // });
   };
 
   handleDashboard = async () => {
@@ -129,7 +132,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createUser: (user) => dispatch(createUser(user)),
+    login: (user) => dispatch(logIn(user)),
     updateLoginForm: (fieldName, fieldValue) =>
       dispatch(updateLoginForm(fieldName, fieldValue)),
   };

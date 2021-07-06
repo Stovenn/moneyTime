@@ -1,6 +1,7 @@
 package com.example.moneyTime.service;
 
 import com.example.moneyTime.dao.ExerciseRepository;
+import com.example.moneyTime.dao.ExerciseSetRepository;
 import com.example.moneyTime.dao.UserRepository;
 import com.example.moneyTime.dao.WorkoutRepository;
 import com.example.moneyTime.model.*;
@@ -11,35 +12,39 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Stream;
 
 @Service
 public class WorkoutService {
     private ExerciseRepository exerciseRepository;
+    private ExerciseSetRepository setRepository;
     private WorkoutRepository workoutRepository;
     private UserRepository userRepository;
 
     @Autowired
-    WorkoutService(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, UserRepository userRepository){
+    WorkoutService(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, UserRepository userRepository, ExerciseSetRepository setRepository){
         this.workoutRepository = workoutRepository;
         this.exerciseRepository = exerciseRepository;
         this.userRepository = userRepository;
+        this.setRepository = setRepository;
     }
 
-    public void createWorkoutsAfterRegister(String email){
-        System.out.println(email);
-        Optional<User> user = userRepository.findByEmail(email);
-        System.out.println(user);
-//        if (user.getWorkouts().isEmpty()){
-//            throw new IllegalStateException("[CreateWorkoutsAfterRegister] Error while attempting to create workouts: User workouts is not empty");
-//        }
-        //createNewWorkouts(user);
+    public ArrayList<Workout> createWorkoutsAfterRegister(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if(user != null){
+            if (!user.getWorkouts().isEmpty()){
+                throw new IllegalStateException("[CreateWorkoutsAfterRegister] Error while attempting to create workouts: User workouts is not empty");
+            } else {
+                return createNewWorkouts(user);
+            }
+        }
+        throw new IllegalStateException("User not found");
     }
 
-    @Scheduled( fixedRate = 1000 * 60 * 120 )
+    @Scheduled( fixedRate = 1000 * 60 * 2 )
     public void generateWorkoutTask(){
+        System.out.println("Batch Launched");
         Stream<User> userList = userRepository.findAll()
                 .stream().filter(user ->
                         !user.getWorkouts().isEmpty() &&
@@ -51,10 +56,9 @@ public class WorkoutService {
         userList.forEach(user -> createNewWorkouts(user));
     }
 
-    public void createNewWorkouts(User user){
-        System.out.println("Create Workout");
+    public ArrayList<Workout> createNewWorkouts(User user){
         List<Exercise> exercises = exerciseRepository.findAll();
-
+        ArrayList<Workout> workouts = new ArrayList<>();
             for (int n = 0; n < 7; n++) {
                 ArrayList<ExerciseSet> currentSets = new ArrayList<>();
                 String position = user.getPosition();
@@ -131,10 +135,12 @@ public class WorkoutService {
                 }
 
                 Workout workout = new Workout(currentSets, user.getWorkouts().isEmpty() ? LocalDate.now() : user.getWorkouts().get(user.getWorkouts().size() - 1).getDate().plusDays(1));
+                workouts.add(workout);
                 user.getWorkouts().add(workout);
                 workoutRepository.save(workout);
                 userRepository.save(user);
             }
+            return workouts;
       };
 
 
@@ -144,6 +150,7 @@ public class WorkoutService {
         ArrayList<ExerciseSet> sets = new ArrayList<>();
         Random r = new Random();
         Exercise randomExercise;
+        ExerciseSet newExerciseSet;
 
         exercisesDic.forEach(exercise -> {
             if(exercise.getType().equals(ExerciceType.valueOf(type))){ filteredList.add(exercise); }
@@ -154,10 +161,14 @@ public class WorkoutService {
         } while(alreadyExist(randomExercise, currentSets));
 
         if(type.equals("WARMUP")){
-            sets.add(new ExerciseSet(randomExercise.getBaseReps(), randomExercise));
+            newExerciseSet = new ExerciseSet(randomExercise.getBaseReps(), randomExercise);
+            sets.add(newExerciseSet);
+            setRepository.save(newExerciseSet);
         } else {
             for (int i = 0; i < 3 ; i++) {
-                sets.add(new ExerciseSet((int)Math.round(randomExercise.getBaseReps() * difficultyRatio), randomExercise));
+                newExerciseSet = new ExerciseSet((int)Math.round(randomExercise.getBaseReps() * difficultyRatio), randomExercise);
+                sets.add(newExerciseSet);
+                setRepository.save(newExerciseSet);
             }
         }
         return sets;

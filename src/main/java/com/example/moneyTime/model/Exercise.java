@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @Document(collection = "exercises")
 public class Exercise {
     @Id
-    private String exerciceId;
+    private String exerciseId;
     private String name;
     private String description;
     private ExerciceType type;

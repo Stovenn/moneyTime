@@ -1,5 +1,5 @@
 const INITIAL_STATE = {
-  users: [],
+  currentUser: null,
   //Register State
   registerForm: {
     firstName: "",
@@ -24,12 +24,6 @@ const INITIAL_STATE = {
 
 const user = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case "FETCH_USERS":
-      return {
-        ...state,
-        users: action.payload.users
-        
-      };
     case "UPDATE_REGISTER_FORM":
       return {
         ...state,
@@ -76,14 +70,19 @@ const user = (state = INITIAL_STATE, action) => {
     case "CREATE_USER":
       return {
         ...state,
-        users: [...state.users, action.payload.newUser],
+        // currentUser: action.payload.newUser,
       };
 
     case "UPDATE_USER":
       return {
-        ...state,
-        users: [...state.users, action.payload.user],
+        ...state
       };
+
+    case "LOG_IN_USER":
+      return {
+        ...state,
+        currentUser : action.payload.userInfos
+      }
     case "INCREMENT_STEP":
       return {
         ...state,

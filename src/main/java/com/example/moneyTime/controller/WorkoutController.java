@@ -1,20 +1,17 @@
 package com.example.moneyTime.controller;
 
-
-import com.example.moneyTime.model.User;
 import com.example.moneyTime.model.Workout;
 import com.example.moneyTime.service.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/v1/workouts")
+@RequestMapping("api/v1/workouts")
 public class WorkoutController {
-
     private final WorkoutService workoutService;
 
     @Autowired
@@ -22,8 +19,9 @@ public class WorkoutController {
         this.workoutService = workoutService;
     }
 
-    @PostMapping
-    public void createWorkouts(@RequestBody String email){
-        workoutService.createWorkoutsAfterRegister(email);
+    @PostMapping(path = "/{userId}")
+    public ArrayList<Workout> createWorkouts(@PathVariable(value = "userId") String userId){
+        System.out.println("generating workouts...");
+        return workoutService.createWorkoutsAfterRegister(userId);
     }
 }

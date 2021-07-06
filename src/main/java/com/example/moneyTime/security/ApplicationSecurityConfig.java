@@ -61,7 +61,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .frameOptions()
                 .deny()
                 .and()
-                .authorizeRequests().antMatchers("/authenticate", "/api/v1/registration", "/api/v1/workouts").permitAll()
+                .authorizeRequests().antMatchers("/authenticate", "/api/v1/registration", "/api/v1/workouts/*").permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

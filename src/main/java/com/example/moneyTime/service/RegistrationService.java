@@ -7,6 +7,8 @@ import com.example.moneyTime.validation.EmailValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 @AllArgsConstructor
 public class RegistrationService {
@@ -28,11 +30,15 @@ public class RegistrationService {
                         request.getLastName(),
                         request.getEmail(),
                         request.getBirthdate(),
-                        request.getPassword()
+                        request.getPassword(),
+                        request.getHeight(),
+                        request.getWeight(),
+                        request.getPosition(),
+                        request.getExperience()
                 )
         );
-        String link = "http://localhost:8080/api/v1/registration";
-        emailSender.send(request.getEmail(), buildEmail(request.getFirstName(), link));
+//        String link = "http://localhost:8080/api/v1/registration";
+//        emailSender.send(request.getEmail(), buildEmail(request.getFirstName(), link));
         return token;
     }
 

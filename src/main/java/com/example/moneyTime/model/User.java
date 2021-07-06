@@ -33,12 +33,17 @@ public class User implements UserDetails {
     private ArrayList<Workout> workouts;
 
 
-    public User(String firstName, String lastName, String email, LocalDate birthdate, String password) {
+    public User(String firstName, String lastName, String email, LocalDate birthdate, String password, Integer height, Integer weight, String position, String experience) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.birthdate = birthdate;
         this.password = password;
+        this.height = height;
+        this.weight = weight;
+        this.position = position;
+        this.experience = experience;
+
         this.workouts = new ArrayList<Workout>();
     }
 

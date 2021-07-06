@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Header, Content, Button, Text, Grid } from "native-base";
+import { Container, Button, Text } from "native-base";
 
 const WelcomeScreen = ({ navigation }) => {
   const toRegister = () => {

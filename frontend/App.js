@@ -15,8 +15,9 @@ import Step3 from "./screens/Register/Step3";
 import Step4 from "./screens/Register/Step4";
 // import MyHeader from './UI/Header'
 
-import { createStore, applyMiddleware, combineReducers } from "redux";
-import { Provider, connect } from "react-redux";
+import { createStore, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
+import rootReducer from './store/reducers/index'
 import thunk from "redux-thunk";
 import { fetchUsers } from "./store/actions/userActions";
 

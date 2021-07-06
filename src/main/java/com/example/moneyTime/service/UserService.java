@@ -6,11 +6,9 @@ import com.example.moneyTime.validation.EmailValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +41,19 @@ public class UserService implements UserDetailsService {
             if(!isValidEmail){
                 throw new IllegalStateException("Email not valid");
             }
-            User _user = userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthdate(), user.getPassword()));
+            User _user = userRepository.save(
+                    new User(
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getEmail(),
+                            user.getBirthdate(),
+                            user.getPassword(),
+                            user.getHeight(),
+                            user.getWeight(),
+                            user.getPosition(),
+                            user.getExperience()
+                    )
+            );
             return new ResponseEntity<>(_user, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -81,7 +91,6 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email)
         throws UsernameNotFoundException {
-        System.out.println(userRepository.findByEmail(email));
             return  userRepository.findByEmail(email)
                     .orElseThrow(()->
                             new UsernameNotFoundException(
@@ -90,7 +99,6 @@ public class UserService implements UserDetailsService {
 
 
     public boolean isPasswordCorrect(String password, UserDetails userDetails) {
-        System.out.println(password);
         return passwordEncoder.matches(password, userDetails.getPassword());
     }
 

@@ -16,14 +16,11 @@ import Step7 from "./Step7";
 
 class RegisterScreen extends Component {
   nextStep = async () => {
-    console.log(this.props.step);
     if (this.props.step === 7) {
-      await this.props.updateUser(this.props.form);
+      await this.props.createUser(this.props.form);
+      //await this.props.generateWorkouts()
       this.props.resetRegisterForm();
       return;
-    }
-    if (this.props.step === 4) {
-      await this.props.createUser(this.props.form);
     }
     this.props.incrementStep();
   };
@@ -123,7 +120,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     createUser: (user) => dispatch(createUser(user)),
-    updateUser: (user) => dispatch(updateUser(user)),
+   // updateUser: (user) => dispatch(updateUser(user)),
     updateRegisterForm: (fieldName, fieldValue) =>
       dispatch(updateRegisterForm(fieldName, fieldValue)),
     resetRegisterForm: () => dispatch(resetRegisterForm()),
